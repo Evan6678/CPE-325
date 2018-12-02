@@ -1,0 +1,128 @@
+/******************************************************************************
+
+Title: Lab 3 - LED Lab
+Author: Evan Stewart
+Date: 9/5/2018
+GitHub: https://github.com/Evan6678
+Description: This lab is to show us how to use Ports to control LED lights with button presses
+
+*******************************************************************************/
+
+#include <msp430.h> 
+
+/*
+ * Personal Notes
+ *
+ * Bit1 = LED2
+ * Bit2 = LED1
+ *
+ * P1 is the switch pin
+ *
+ * LED Pin
+ * P2DIR Sets the input / output direction of the pin
+ * P2OUT Sets the value of the output to be send (1/0)
+ */
+
+//define functions
+void switchOnePressed(unsigned int);
+void switchTwoPressed(unsigned int);
+void bothSwitchesPressed(unsigned int);
+
+//define switches
+#define Switch1 P1IN&BIT0       //define Switch 1
+#define Switch2 P1IN&BIT1       //define Switch 2
+
+int main(void)
+{
+	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
+	
+	//initialize pins
+	P2DIR |= BIT1 + BIT2;       // Set P2.1 and P2.2 to output
+    P2OUT &= ~BIT1;             // P2OUT AND 0 = 0 Turns LED2 off initially
+    P2OUT &= ~BIT2;             // P2OUT AND 0 = 0
+
+    //variables
+    unsigned int i = 0;
+
+    // infinite loop
+    for(;;)
+    {
+        // If Switch1 is pressed and Switch2 is not
+        if((Switch1) == 0 && (Switch2) != 0)
+        {
+            switchOnePressed(i);
+        }
+
+        //If Switch1 is not pressed and Switch2 is pressed
+        if((Switch1) != 0 && (Switch2) == 0)
+        {
+            switchTwoPressed(i);
+        }
+
+        //Bonus: If both switches are pressed at same time
+        if((Switch1) == 0 && (Switch2) == 0)
+        {
+            bothSwitchesPressed(i);
+        }
+
+    }
+
+	return 0;
+}
+
+void switchOnePressed(unsigned int i){
+
+    //start by turning on LED 1 and turning off LED 2 so it can be ready to blink
+    P2OUT &= ~BIT1;  // P2OUT AND 0 = 0 turning LED2 OFF
+    P2OUT |= BIT2;   // P2OUT OR 1 = 1  turning LED1 ON
+
+    // While switch is held down loop through this
+    while((Switch1) == 0 && (Switch2) != 0)
+    {
+        P2OUT ^= BIT2;  // P2OUT XOR 1 = 0/1. If LED is on(1) it will turn off and wait 5Hz. if off(0) it will be on for 5Hz
+        for(i = 0; i < 10000; i++);  // 5Hz Delay
+    }
+
+    P2OUT &= ~BIT2; // P2OUT AND 0 = 0 Turns LED 1 OFF after user releases button
+
+}
+
+void switchTwoPressed(unsigned int i){
+
+    //Initialize the LEDs for this state
+    P2OUT |= BIT2; // P2OUT OR 1 = 1 Turns ON LED1
+    P2OUT |= BIT1; // P2OUT OR 1 = 1 Turns ON LED2
+
+    //loops through while only switch 2 is held down
+    while((Switch1) != 0 && (Switch2) == 0)
+    {
+        P2OUT ^= BIT1; // P2OUT XOR 1 = 0/1. If P2Out is on it will turn off. If P2Out is off then it will turn it on
+
+        //create delay using for loops
+        for(i = 0; i < 50000; i++);
+        for(i = 0; i < 50000; i++);
+        for(i = 0; i < 25000; i++);
+    }
+
+    P2OUT &= ~(BIT2 + BIT1);    // For both Bits 1 and 2 P2OUT AND 0 = 0 turning both LEDs off
+
+}
+void bothSwitchesPressed(unsigned int i){
+
+    P2OUT &= ~BIT1; //P2OUT AND 0 = 0 turning OFF LED2 at first
+    P2OUT |= BIT2;  //P2OUT OR 1 = 1 turning ON LED1 at first
+
+    //while both buttons are pressed down
+    while((Switch1) == 0 && (Switch2) == 0)
+    {
+        //these 2 XOR values will cause the blinking. At any given time only value will be 1 and the other will be 0
+        P2OUT ^= BIT2;
+        P2OUT ^= BIT1;
+
+        //delay
+        for(i = 0; i < 25000; i++);
+    }
+
+    P2OUT &= ~(BIT2 + BIT1);    // Turn off both LEDs
+
+}
