@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>3X3 Matrix README</title>
+  </head>
+  <body>
+	<h1>CPE 325 - Final Project</h1>
+	<br>
+	<hr>
+	<h3>Description:</h3>
+	<p>This app is a basic 3x3 matrix calculator using the MSP430FG4618 microcontroller. It is written in C and assembly and utilizes UART for terminal
+	comminication and the MSP430 accumulator for multiplication.</p>
+	
+	<h3>Setup:</h3>
+	<p>This section will explain how to setup and run the project. First you will need to create a project in TI Code Composer Studio and configure it as we 
+	were shown in lab1 (steps provided in link below). Next you will take the provided main.c and MULT.asm files and save them into your project. Third you will open Mobaxterm or Putty and configure your serial port as COM1 at a baud rate of 19200. Run the project making sure your MPS430 has power and is connected to the serial port.</p>
+	
+	<a href="#" onclick="window.open('ConfigureGuide.pdf', '_blank', 'fullscreen=yes'); return false;">Configure Steps</a>
+	
+	<h3>Instructions:</h3>
+	<p>The project can be run by only using numbers and the SPACE bar. For each position in your matrix insert a desired number between 0-9,999 then press the SPACE bar.
+	The SPACE bar will automatically save your input and prepare you for the next input. It will also determine where in the matrix you are and will automatically
+	do things for you such as move to the next row, move to the next matrix input, and generate all your calculations after all the inputs are made.</p>
+	
+	<h3>Constraints:</h3>
+	<p>Due to limited time for this project some constraints had to be made to limit the scope and complexity.</p>
+	<ul>
+		<li>Negative inputs are not allowed</li>
+		<li>Values greater than 9,999 are not allowed</li>
+		<li>Backspace to delete a number input does not work</li>
+		<li>3x3 matix is the only size allowed</li>
+	</ul>
+  </body>
+</html>
